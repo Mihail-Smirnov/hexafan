@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+			xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Зал ожидания</title>
+	<link rel='stylesheet' href='/css/styles.css'>
+  <script src="/lib/jquery.min.js"></script>
+  <script src="/lib/sockjs.min.js"></script>
+  <script src="/lib/stomp.min.js"></script>
+</head>
+<body>
+<div class="topnav">
+	<div>
+		<a class="active" href="/">Главная</a>
+		<a href="/waiting">Игра</a>
+		<a href="/rating">Рейтинг</a>
+		<a href="/profile">Профиль</a>
+		<a href="/about">О проекте</a>
+	</div>
+	<div>
+		<div sec:authorize="!hasRole('USER')">
+			<a href="/login">Войти</a>
+		</div>
+		<div sec:authorize="hasRole('USER')">
+			<img th:src="@{${avatar}}" class="avatar"/>
+			<a href="/logout">Выйти</a>
+		</div>
+	</div>
+</div>
+<div class="main-padding">
+	<div>
+		<button class="btn" id="fast-game-btn" type="button">Быстрая игра</button>
+		<button class="btn" id="open-create-room-btn" type="button">Создать комнату</button>
+		<button class="btn" id="open-search-room-btn" type="button">Найти по коду</button>
+		<button class="btn-red" id="delete-room-btn" type="button" hidden>Удалить комнату</button>
+		<ins class="room-code" id="my-room-code-txt" style="visibility: hidden;"></ins>
+	</div>
+
+	<table class="table table-room">
+		<thead>
+			<tr>
+				<th>Пользователь</th>
+				<th>Время хода</th>
+				<th>Первый ход</th>
+				<th>Размер доски</th>
+				<th>Расстановка</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="room-table-body">
+			<tr>
+				<td style="text-align: center;" colspan="6">Комнат не найдено</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<dialog id="create-room-dialog">
+	<h3 class="modal-header">Настройки комнаты</h3>
+	<div class="modal-body">
+		<div class="radio-row">
+			Время на ход
+			<div class="form_radio_btn">
+				<input id="movetime-radio-1" type="radio" name="movetime-radio" value="30">
+				<label for="movetime-radio-1">30 cек.</label>
+			</div>
+
+			<div class="form_radio_btn">
+				<input id="movetime-radio-2" type="radio" name="movetime-radio" value="60" checked>
+				<label for="movetime-radio-2">1 мин.</label>
+			</div>
+
+			<div class="form_radio_btn">
+				<input id="movetime-radio-3" type="radio" name="movetime-radio" value="120">
+				<label for="movetime-radio-3">2 мин.</label>
+			</div>
+			<div class="form_radio_btn">
+				<input id="movetime-radio-4" type="radio" name="movetime-radio" value="300">
+				<label for="movetime-radio-4">5 мин.</label>
+			</div>
+		</div>
+
+		<div class="radio-row">
+			Первый ход
+			<div class="form_radio_btn">
+				<input id="firstPlayer-radio-1" type="radio" name="firstPlayer-radio" value="WHITE" checked>
+				<label for="firstPlayer-radio-1">Белый</label>
+			</div>
+
+			<div class="form_radio_btn">
+				<input id="firstPlayer-radio-2" type="radio" name="firstPlayer-radio" value="BLACK">
+				<label for="firstPlayer-radio-2">Черный</label>
+			</div>
+		</div>
+
+		<div class="radio-row">
+			Размер доски
+			<div class="form_radio_btn">
+				<input id="boardSize-radio-1" type="radio" name="boardSize-radio" value="4">
+				<label for="boardSize-radio-1">4</label>
+			</div>
+
+			<div class="form_radio_btn">
+				<input id="boardSize-radio-2" type="radio" name="boardSize-radio" value="6" checked>
+				<label for="boardSize-radio-2">6</label>
+			</div>
+
+			<div class="form_radio_btn">
+				<input id="boardSize-radio-3" type="radio" name="boardSize-radio" value="8">
+				<label for="boardSize-radio-3">8</label>
+			</div>
+		</div>
+
+		<div class="radio-row">
+			Расстановка
+			<div class="form_radio_btn">
+				<input id="arrangement-radio-1" type="radio" name="arrangement-radio" value="NORMAL" checked>
+				<label for="arrangement-radio-1">Обычная</label>
+			</div>
+
+			<div class="form_radio_btn">
+				<input id="arrangement-radio-2" type="radio" name="arrangement-radio" value="WIDE">
+				<label for="arrangement-radio-2">Широкая</label>
+			</div>
+		</div>
+		<div class="radio-row">
+			Приватная комната
+			<input class="checkbox-private" id="hiddenRoom" type="checkbox">
+		</div>
+
+	</div>
+	<footer class="modal-footer">
+		<button class="btn" id="close-create-room-btn" type="button">Отмена</button>
+		<button class="btn" id="save-create-room-btn" type="button">Создать</button>
+	</footer>
+</dialog>
+
+<dialog id="search-room-dialog">
+	<h3 class="modal-header">Поиск комнаты</h3>
+	<div class="modal-body">
+		<div>
+			<input id="room-code-tb" type="text" placeholder="Код комнаты">
+		</div>
+		<footer class="modal-footer">
+			<button class="btn" id="close-search-room-btn" type="button">Отмена</button>
+			<button class="btn" id="save-search-room-btn" type="button">Найти</button>
+		</footer>
+	</div>
+</dialog>
+
+<dialog id="message-dialog">
+	<h3 id="message-dialog-header" class="modal-header"></h3>
+	<div class="modal-body">
+		<div id="message-dialog-text">
+		</div>
+		<footer class="modal-footer">
+			<button id="close-message-btn" class="btn" type="button">Закрыть</button>
+		</footer>
+	</div>
+</dialog>
+
+<script src="/js/waiting.js"></script>
+</body>
+</html>

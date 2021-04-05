@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Регистрация</title>
+  <link rel='stylesheet' href='/css/styles.css'>
+</head>
+<body>
+<div class="login">
+  <div class="login-screen">
+    <div class="app-title">
+      <h1>Регистрация</h1>
+    </div>
+
+    <form action="/registration" method="post" id="form" class="login-form" th:object="${userForm}" name="userForm">
+      <div class="control-group">
+        <input type="text" class="login-field" value="" placeholder="Логин" id="username" name="username" th:field="*{username}">
+        <label class="login-field-icon fui-user" for="username"></label>
+        <div class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+        <div class="error" th:text="${usernameExistsError}"></div>
+      </div>
+
+      <div class="control-group">
+        <input type="text" class="login-field" value="" placeholder="Почта" id="email" name="email" th:field="*{email}">
+        <label class="login-field-icon fui-user" for="email"></label>
+        <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+      </div>
+
+      <div class="control-group">
+        <input type="password" class="login-field" value="" placeholder="Пароль" id="password" name="password">
+        <label class="login-field-icon fui-lock" for="password"></label>
+        <div class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"><br/></div>
+      </div>
+
+      <div class="control-group">
+        <input type="password" class="login-field" value="" placeholder="Повтор пароля" id="passwordConfirm" name="passwordConfirm">
+        <label class="login-field-icon fui-lock" for="passwordConfirm"></label>
+        <div class="error" th:text="${passwordConfirmError}"></div>
+      </div>
+
+      <a class="btn btn-login btn-primary btn-large btn-block" href="javascript:;" onclick="document.getElementById('form').submit()">Зарегистрироваться</a>
+      <a class="login-link" href="/login">Войти</a>
+    </form>
+  </div>
+</div>
+</body>
+</html>

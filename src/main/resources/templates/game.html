@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>Гексофен</title>
+  <link rel='stylesheet' href='/css/styles.css'>
+  <script src='/lib/jquery.min.js'></script>
+  <script src='/lib/sockjs.min.js'></script>
+  <script src='/lib/stomp.min.js'></script>
+</head>
+<body>
+<div class="topnav">
+  <div>
+    <a class="active" href="/">Главная</a>
+    <a href="/waiting">Игра</a>
+    <a href="/rating">Рейтинг</a>
+    <a href="/profile">Профиль</a>
+    <a href="/about">О проекте</a>
+  </div>
+  <div>
+    <div sec:authorize="!hasRole('USER')">
+      <a href="/login">Войти</a>
+    </div>
+    <div sec:authorize="hasRole('USER')">
+      <img th:src="@{${avatar}}" class="avatar"/>
+      <a href="/logout">Выйти</a>
+    </div>
+  </div>
+</div>
+<div class="main-padding">
+  <div class='main-wrap'>
+    <div>
+      <div class="timeTo timeTo-white">
+        <div class="first">
+          <ins id="timer-minutes-first">0</ins>
+        </div>
+        <div class="second">
+          <ins id="timer-minutes-last">0</ins>
+        </div>
+        <span>:</span>
+        <div class="first">
+          <ins id="timer-seconds-first">0</ins>
+        </div>
+        <div class="second">
+          <ins id="timer-seconds-last">0</ins>
+        </div>
+      </div>
+      <div class='chat'>
+        <div class='chat-messages'>
+          <div class='chat-messages__content' id='messages'>
+            Загрузка...
+          </div>
+        </div>
+        <div class='chat-input'>
+          <input type='text' id='message-text' class='chat-form__input' placeholder='Введите сообщение'>
+          <button type='button' onclick='sendMessageFromTextBox()' class='chat-form__submit btn'>></button>
+        </div>
+      </div>
+      <button class="btn" type='button' onclick='sendLoseMessage()'>Сдаться</button>
+      <button class="btn" type='button' onclick='sendDrawOffer()'>Предложить ничью</button>
+    </div>
+    <div class="board-wrap">
+      <div class="board-black-player board-player-wrap">
+        <h3 id="black-player-username" class="board-h3" th:text="${blackPlayerUsername}"></h3>
+        <img th:if="${blackPlayerAvatar != null}" th:src="@{${blackPlayerAvatar}}" class="avatar_inline"/>
+      </div>
+      <canvas class='board' id='canvas'></canvas>
+      <div class="board-white-player board-player-wrap">
+        <h3 id="white-player-username" class="board-h3" th:text="${whitePlayerUsername}"></h3>
+        <img th:if="${whitePlayerAvatar != null}" th:src="@{${whitePlayerAvatar}}" class="avatar_inline"/>
+      </div>
+    </div>
+  </div>
+</div>
+
+<dialog id="message-dialog">
+  <h3 id="message-dialog-header" class="modal-header"></h3>
+  <div class="modal-body">
+    <div id="message-dialog-text">
+    </div>
+    <footer class="modal-footer">
+      <button class="btn" id="close-message-btn" type="button">Закрыть</button>
+    </footer>
+  </div>
+</dialog>
+<dialog id="question-dialog">
+  <h3 id="question-dialog-header" class="modal-header"></h3>
+  <div class="modal-body">
+    <div id="question-dialog-text">
+    </div>
+    <footer class="modal-footer">
+      <button class="btn" id="reject-question-btn" type="button">Нет</button>
+      <button class="btn" id="ok-question-btn" type="button">Да</button>
+    </footer>
+  </div>
+</dialog>
+
+<script src='/js/gameBase.js'></script>
+<script src='/js/game.js'></script>
+</body>
+</html>

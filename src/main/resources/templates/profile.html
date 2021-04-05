@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Профиль</title>
+  <link rel='stylesheet' href='/css/styles.css'>
+</head>
+<body>
+<div class="topnav">
+  <div>
+    <a class="active" href="/">Главная</a>
+    <a href="/waiting">Игра</a>
+    <a href="/rating">Рейтинг</a>
+    <a href="/profile">Профиль</a>
+    <a href="/about">О проекте</a>
+  </div>
+  <div>
+    <div sec:authorize="!hasRole('USER')">
+      <a href="/login">Войти</a>
+    </div>
+    <div sec:authorize="hasRole('USER')">
+      <img th:src="@{${avatar}}" class="avatar"/>
+      <a href="/logout">Выйти</a>
+    </div>
+  </div>
+</div>
+<div class="main-padding">
+  <div class="main-wrap-profile">
+    <div>
+      <h1 id="username"></h1>
+      <img class="avatar_large" th:src="@{${avatar}}"/>
+      <form id="avatar-form" method="post" enctype="multipart/form-data">
+        <div class="input__wrapper">
+          <input name="file" type="file" id="avatar-file" class="input input__file" multiple>
+          <label for="avatar-file" class="input__file-button">
+            <span class="input__file-button-text">Загрузить аватар</span>
+          </label>
+        </div>
+      </form>
+    </div>
+    <div>
+      <div>
+        <div id="selectBoardStyle" class="select-style">
+          Стиль доски
+          <div class="form_radio_btn">
+            <input id="board-style-radio-1" type="radio" name="board-style-radio" value="COLORFUL" checked>
+            <label for="board-style-radio-1">Разноцветный</label>
+          </div>
+          <div class="form_radio_btn">
+            <input id="board-style-radio-2" type="radio" name="board-style-radio" value="BEIGE">
+            <label for="board-style-radio-2">Бежевый</label>
+          </div>
+        </div>
+        <div id="selectFigureStyle" class="select-style">
+          Стиль фигур
+          <div class="form_radio_btn">
+            <input id="figure-style-radio-1" type="radio" name="figure-style-radio" value="GEOMETRY" checked>
+            <label for="figure-style-radio-1">Геометрический</label>
+          </div>
+          <div class="form_radio_btn">
+            <input id="figure-style-radio-2" type="radio" name="figure-style-radio" value="CLASSIC">
+            <label for="figure-style-radio-2">Классический</label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="user-stats">
+          <p>Побед: <ins id="game-win"></ins></p>
+          <p>Поражений: <ins id="game-lose"></ins></p>
+          <p>Ничьих: <ins id="game-draw"></ins></p>
+          <p>Всего игр: <ins id="game-total"></ins></p>
+        </div>
+        <div class="user-stats">
+          <p>Процент побед: <ins id="game-win-percentage"></ins>%</p>
+          <p>Всего времени в игре: <ins id="game-total-time"></ins></p>
+          <p>Среднее время на игру: <ins id="game-average-time"></ins></p>
+        </div>
+      </div>
+      <div>
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Дата игры</th>
+            <th>Противник</th>
+            <th>Первый ход</th>
+            <th>Размер доски</th>
+            <th>Расстановка</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody id="replay-table-body">
+            <tr>
+              <td style="text-align: center;" colspan="6">Прошлых игр не найдено</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-nav">
+          <button class="btn" id="prev-page-btn" type="button" disabled>Назад</button>
+          <ins>Страница <ins id="page-number">1</ins></ins>
+          <button class="btn" id="next-page-btn" type="button" disabled>Вперед</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<dialog id="message-dialog">
+  <h3 id="message-dialog-header" class="modal-header"></h3>
+  <div class="modal-body">
+    <div id="message-dialog-text">
+    </div>
+    <footer class="modal-footer">
+      <button id="close-message-btn" class="btn" type="button">Закрыть</button>
+    </footer>
+  </div>
+</dialog>
+
+<script src='/js/profile.js'></script>
+</body>
+</html>

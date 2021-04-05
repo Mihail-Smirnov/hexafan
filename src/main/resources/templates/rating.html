@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Рейтинг</title>
+  <link rel='stylesheet' href='/css/styles.css'>
+</head>
+<body>
+<div class="topnav">
+  <div>
+    <a class="active" href="/">Главная</a>
+    <a href="/waiting">Игра</a>
+    <a href="/rating">Рейтинг</a>
+    <a href="/profile">Профиль</a>
+    <a href="/about">О проекте</a>
+  </div>
+  <div>
+    <div sec:authorize="!hasRole('USER')">
+      <a href="/login">Войти</a>
+    </div>
+    <div sec:authorize="hasRole('USER')">
+      <img th:src="@{${avatar}}" class="avatar"/>
+      <a href="/logout">Выйти</a>
+    </div>
+  </div>
+</div>
+<div class="main-padding">
+  <div class="rating-top-panel">
+    <div id="rating-type">
+      Вид рейтинга
+      <div class="form_radio_btn">
+        <input id="rating-type-radio-1" type="radio" name="rating-type-radio" value="WINNERS" checked>
+        <label for="rating-type-radio-1">Количество побед</label>
+      </div>
+      <div class="form_radio_btn">
+        <input id="rating-type-radio-2" type="radio" name="rating-type-radio" value="GAME_TIME">
+        <label for="rating-type-radio-2">Общее время в игре</label>
+      </div>
+    </div>
+    <div id="my-rating"></div>
+  </div>
+  <table class="table table-rating">
+    <thead>
+    <tr>
+      <th>Место</th>
+      <th>Аватар</th>
+      <th>Пользователь</th>
+      <th id="rating-type-header">Количество побед</th>
+    </tr>
+    </thead>
+    <tbody id="rating-table-body">
+    </tbody>
+  </table>
+</div>
+<script src="/js/rating.js"></script>
+</body>
+</html>
