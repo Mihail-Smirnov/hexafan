@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
   <title>Профиль</title>
   <link rel='stylesheet' href='/css/styles.css'>
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
 </head>
 <body>
 <div class="topnav">
@@ -26,9 +27,9 @@
   </div>
 </div>
 <div class="main-padding">
-  <div class="main-wrap-profile">
+  <div id="profile" class="main-wrap-profile" hidden>
     <div>
-      <h1 id="username"></h1>
+      <h1 id="username" th:text="${username}"></h1>
       <img class="avatar_large" th:src="@{${avatar}}"/>
       <form id="avatar-form" method="post" enctype="multipart/form-data">
         <div class="input__wrapper">
@@ -38,6 +39,16 @@
           </label>
         </div>
       </form>
+      <div id="floatingCirclesG" hidden>
+        <div class="f_circleG" id="frotateG_01"></div>
+        <div class="f_circleG" id="frotateG_02"></div>
+        <div class="f_circleG" id="frotateG_03"></div>
+        <div class="f_circleG" id="frotateG_04"></div>
+        <div class="f_circleG" id="frotateG_05"></div>
+        <div class="f_circleG" id="frotateG_06"></div>
+        <div class="f_circleG" id="frotateG_07"></div>
+        <div class="f_circleG" id="frotateG_08"></div>
+      </div>
     </div>
     <div>
       <div>
@@ -97,7 +108,7 @@
         </table>
         <div class="table-nav">
           <button class="btn" id="prev-page-btn" type="button" disabled>Назад</button>
-          <ins>Страница <ins id="page-number">1</ins></ins>
+          <ins>Страница <ins id="page-number">1 из 1</ins></ins>
           <button class="btn" id="next-page-btn" type="button" disabled>Вперед</button>
         </div>
       </div>

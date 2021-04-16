@@ -20,7 +20,7 @@ function updateRatingType(){
   }else if(ratingType === "GAME_TIME"){
     ratingTypeHeader.innerHTML = "Общее время в игре"
   }
-  loadRating()
+  updateRatingTable()
 }
 
 function getUserRowHTML(user, idx){
@@ -34,14 +34,15 @@ function getUserRowHTML(user, idx){
 
 function updateRatingTable(){
   if(rating != null){
+    curRating = rating[ratingType]
     ratingTable.innerHTML = ""
-    for(var i = 0; i < rating.length; i++){
-      ratingTable.innerHTML += getUserRowHTML(rating[i], i+1)
+    for(var i = 0; i < curRating.length; i++){
+      ratingTable.innerHTML += getUserRowHTML(curRating[i], i+1)
     }
 
-    var place = rating.length + "+"
-    for(var i = 0; i < rating.length; i++){
-      if(username === rating[i].username){
+    var place = curRating.length + "+"
+    for(var i = 0; i < curRating.length; i++){
+      if(username === curRating[i].username){
         place = i+1
       }
     }
@@ -54,13 +55,14 @@ function loadUsername(){
   xhr.open('GET', '/data/currentUsername')
   xhr.onload = () => {
     username = xhr.response
+    updateRatingTable()
   }
   xhr.send()
 }
 
 function loadRating(){
   var xhr = new XMLHttpRequest()
-  xhr.open('GET', '/data/rating?type='+ratingType)
+  xhr.open('GET', '/data/rating')
   xhr.onload = () => {
     if(xhr.response) {
       rating = JSON.parse(xhr.response)

@@ -5,7 +5,7 @@ function clickOnCell(e){
 	if(figure !== null && figure.player == player.color){
 		player.selectedFigure = figure
 		markMoveAndAttackCells(figure)
-	}else if(cells[cellName].underMove){
+	}else if(cells[cellName].underMove && cells[cellName].figure != player.selectedFigure){
 	  doMove({from:player.selectedFigure.cell,to:cellName})
 	  player.selectedFigure = null
 	  clearMark()

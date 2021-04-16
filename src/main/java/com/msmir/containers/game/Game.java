@@ -7,6 +7,7 @@ import com.msmir.containers.game.messages.PlayerMessage;
 import com.msmir.containers.game.messages.SystemMessage;
 import com.msmir.containers.game.util.Arrangement;
 import com.msmir.containers.game.util.FigureMove;
+import com.msmir.entity.figures.Figure;
 import com.msmir.entity.user.User;
 import com.msmir.vm.CellVm;
 import com.msmir.vm.FigureMoveVm;
@@ -88,8 +89,11 @@ public class Game {
       Cell cell = board.getCell(moveVm.getFrom());
       if (cell != null && cell.getFigure() != null) {
         FigureMove move = new FigureMove(moveVm, board);
-        if (board.isKingInSafeAfterMove(status.getActivePlayer(), move)) {
-          if (cell.getFigure().doMove(board, move)) {
+        if (status.isKingInSafeAfterMove(board, status.getActivePlayer(), move)) {
+          Figure figure = cell.getFigure();
+          if (figure != null &&
+              figure.getPlayer().equals(getActivePlayer()) &&
+              cell.getFigure().doMove(board, move)) {
             switchPlayer();
             status.setLastMoveTime(LocalDateTime.now());
             status.update(this);

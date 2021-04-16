@@ -55,18 +55,6 @@ function getTimeAgoString(milliseconds){
   }
 }
 
-function loadUsername(callback){
-  var xhr = new XMLHttpRequest()
-  xhr.open('GET', '/data/currentUsername')
-  xhr.onload = () => {
-    username = xhr.response
-    usernameText.innerHTML = username
-
-    loadCount--; if(loadCount === 0) callback()
-  }
-  xhr.send()
-}
-
 function loadUserStats(callback){
   var xhr = new XMLHttpRequest()
   xhr.open('GET', '/data/currentUserStats')
@@ -144,6 +132,8 @@ function loadReplayPageCount(callback){
 }
 
 function loadReplayPage(){
+  document.getElementById("profile").hidden = false
+
   var xhr = new XMLHttpRequest()
   xhr.open('GET', '/data/myReplays?page='+replayPageNum)
   xhr.onload = () => {
@@ -156,7 +146,6 @@ function loadReplayPage(){
 }
 
 function loadAll(callback){
-  loadUsername(callback)
   loadUserStats(callback)
   loadUserSettings(callback)
   loadReplayPageCount(callback)
@@ -186,6 +175,8 @@ function getReplayButtonHTML(replay){
 
 function getReplayRowHTML(replay){
   var myColor = replay.whitePlayer === username ? "WHITE" : "BLACK"
+  console.log(replay.whitePlayer)
+  console.log(username)
 
   var trClass = ""
   if(replay.winner === "DRAW"){
@@ -212,7 +203,7 @@ function updateReplayTable(){
     replayPageNum = replayPage.page
     prevPageBtn.disabled = replayPageNum === 0
     nextPageBtn.disabled = replayPageNum >= replayPageCount-1
-    pageNumText.innerHTML = replayPageNum+1
+    pageNumText.innerHTML = (replayPageNum+1).toString() + " из " + Math.max(1, replayPageCount)
     if(replayPageCount != 0){
       replayTable.innerHTML = ""
       for(var i = 0; i < replayPage.replayList.length; i++){
@@ -227,10 +218,11 @@ function submitAvatar(){
     if(avatarFile.files[0].size >= 1048576){
       showMessage("Ошибка", "Размер загружаемого аватара не должен превышать 1 Мб")
     }else{
-      var fileExtension = ['png', 'jpg', 'bmp']
+      var fileExtension = ['jpg']
       if (fileExtension.indexOf(avatarFile.files[0].name.split('.').pop().toLowerCase()) == -1) {
-        showMessage("Ошибка", "Файл должен иметь расширение .png, .jpg или .bmp")
+        showMessage("Ошибка", "Файл должен иметь расширение .jpg")
       }else{
+        document.getElementById("floatingCirclesG").hidden = false
         document.getElementById("avatar-form").submit()
       }
     }
@@ -243,10 +235,9 @@ var messageText = document.getElementById("message-dialog-text")
 var closeMessageBtn = document.getElementById("close-message-btn")
 closeMessageBtn.addEventListener("click", closeMessageDialog)
 
-var username = null
+var username = document.getElementById('username').innerHTML
 var settings = null
 
-var usernameText = document.getElementById('username')
 var gameWinText = document.getElementById('game-win')
 var gameLoseText = document.getElementById('game-lose')
 var gameDrawText = document.getElementById('game-draw')
@@ -279,5 +270,5 @@ var pageNumText = document.getElementById('page-number')
 var players = {WHITE:"Белые", BLACK:"Черные"}
 var arrangements = {NORMAL:"Обычная", WIDE:"Широкая"}
 
-var loadCount = 4
+var loadCount = 3
 loadAll(loadReplayPage)

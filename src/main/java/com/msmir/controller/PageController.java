@@ -59,6 +59,7 @@ public class PageController {
   @GetMapping(value = "/profile")
   public String profilePage(Model model){
     userService.addUserAvatar(model);
+    model.addAttribute("username", userService.getCurrentUser().getUsername());
     return "profile";
   }
 

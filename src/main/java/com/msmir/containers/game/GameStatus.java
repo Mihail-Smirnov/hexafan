@@ -39,79 +39,87 @@ public class GameStatus {
 
   public void update(Game game) {
     this.figures = game.getBoard().getFigures();
-    this.whiteCheck = !game.getBoard().isKingInSafe("WHITE");
-    this.blackCheck = !game.getBoard().isKingInSafe("BLACK");
+    updatePlayerStatus(game.getBoard(), "WHITE");
+    updatePlayerStatus(game.getBoard(), "BLACK");
 
-    if(!this.isFinished){
-      setWinner(calcWinner(game.getBoard()));
-    }
     if(this.isFinished){
       game.close(this.winner);
     }
   }
 
-  private String calcWinner(Board board){
-    if(this.whiteCheck){
-      if(isMate(board, "WHITE")){
-        return "BLACK";
-      }
-    }else if(this.blackCheck){
-      if(isMate(board, "BLACK")){
-        return "WHITE";
+  private void updatePlayerStatus(Board board, String player){
+    boolean kingInSafe = isKingInSafe(board, player);
+    if(player.equals("WHITE")){
+      this.whiteCheck = !kingInSafe;
+    }else{
+      this.blackCheck = !kingInSafe;
+    }
+
+    List<Figure> figures = board.getFigures();
+    for(Figure figure : figures) {
+      if (figure.getPlayer().equals(player)) {
+        List<Cell> cells = figure.getPossibleCells(board);
+        for(Cell cell : cells){
+          FigureMove move = new FigureMove(board.getCell(figure.getCell()), cell);
+          if(isKingInSafeAfterMove(board, player, move)){
+            return;
+          }
+        }
       }
     }
-    return "UNKNOWN";
+
+    setLooser(player);
   }
 
-  private boolean isMate(Board board, String player){
+  public boolean isKingInSafeAfterMove(Board board, String player, FigureMove move){
+    Figure movedFigure = null;
+    Figure replacedFigure = null;
+    if(move != null){
+      movedFigure = move.getFrom().getFigure();
+      replacedFigure = move.getTo().getFigure();
+      if(movedFigure != null){
+        movedFigure.setCell(move.getTo().getName());
+        move.getFrom().setFigure(null);
+        move.getTo().setFigure(movedFigure);
+      }
+    }
+    boolean answer = isKingInSafe(board, player);
+    if(move != null){
+      move.getTo().setFigure(replacedFigure);
+      if(movedFigure != null){
+        movedFigure.setCell(move.getFrom().getName());
+        move.getFrom().setFigure(movedFigure);
+      }
+    }
+    return answer;
+  }
+
+  public boolean isKingInSafe(Board board, String player){
     Figure king = board.getKingFigure(player);
     if(king == null){
-      return false;
+      return true;
     }
 
     Cell kingCell = board.getCell(king.getCell());
     List<Figure> figures = board.getFigures();
-    List<Set<Cell>> dangerLines = new ArrayList<>();
-    Cell enemyCell = null;
     for(Figure figure : figures){
       if(!figure.getPlayer().equals(player)){
-        List<List<Cell>> cellLines = figure.getPossibleCellLines(board);
-        for(List<Cell> cellLine : cellLines){
-          if(cellLine.contains(kingCell)){
-            dangerLines.add(new HashSet<>(cellLine));
-            enemyCell = board.getCell(figure.getCell());
-          }
+        if(figure.getPossibleCells(board).contains(kingCell)){
+          return false;
         }
       }
     }
-
-    if(dangerLines.isEmpty()){
-      return false;
-    }
-
-    Set<Cell> safeCell = dangerLines.get(0);
-    for(int i = 1; i < dangerLines.size(); i++){
-      safeCell.retainAll(dangerLines.get(i));
-    }
-
-    for(Figure figure : figures) {
-      if (figure.getPlayer().equals(player) && figure != king) {
-        List<Cell> cells = figure.getPossibleCells(board);
-        for(Cell cell : cells){
-          if(safeCell.contains(cell) || (safeCell.size() == 1 && safeCell.contains(enemyCell))){
-            return false;
-          }
-        }
-      }
-    }
-    List<Cell> possibleCells = king.getPossibleCells(board);
-    for(Cell cell : possibleCells){
-      if(board.isKingInSafeAfterMove(player, new FigureMove(kingCell, cell))){
-        return false;
-      }
-    }
-
     return true;
+  }
+
+  private void setLooser(String looser){
+    if(looser.equals("WHITE")){
+      setWinner("BLACK");
+    }else if(looser.equals("BLACK")){
+      setWinner("WHITE");
+    }else{
+      setWinner("UNKNOWN");
+    }
   }
 
   public boolean isStarted() {

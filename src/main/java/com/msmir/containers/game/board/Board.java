@@ -65,45 +65,4 @@ public class Board {
   public Cell getCell(String cell){
     return cells.get(cell);
   }
-
-  public boolean isKingInSafeAfterMove(String player, FigureMove move){
-    Figure movedFigure = null;
-    Figure replacedFigure = null;
-    if(move != null){
-      movedFigure = move.getFrom().getFigure();
-      replacedFigure = move.getTo().getFigure();
-      if(movedFigure != null){
-        movedFigure.setCell(move.getTo().getName());
-        move.getFrom().setFigure(null);
-        move.getTo().setFigure(movedFigure);
-      }
-    }
-    boolean answer = isKingInSafe(player);
-    if(move != null){
-      move.getTo().setFigure(replacedFigure);
-      if(movedFigure != null){
-        movedFigure.setCell(move.getFrom().getName());
-        move.getFrom().setFigure(movedFigure);
-      }
-    }
-    return answer;
-  }
-
-  public boolean isKingInSafe(String player){
-    Figure king = getKingFigure(player);
-    if(king == null){
-      return true;
-    }
-
-    Cell kingCell = getCell(king.getCell());
-    List<Figure> figures = getFigures();
-    for(Figure figure : figures){
-      if(!figure.getPlayer().equals(player)){
-        if(figure.getPossibleCells(this).contains(kingCell)){
-          return false;
-        }
-      }
-    }
-    return true;
-  }
 }

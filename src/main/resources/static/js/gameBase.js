@@ -490,6 +490,7 @@ function clearMark(){
 
 function markMoveAndAttackCells(figure){
 	clearMark()
+	cells[figure.cell].underMove = true
 	var nearCells = figure.getNearCells()
 	for(var i = 0; i < nearCells.length; i++){
 		if(canMoveTo(figure, nearCells[i].name)) cells[nearCells[i].name].underMove = true

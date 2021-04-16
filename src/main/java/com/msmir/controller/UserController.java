@@ -12,16 +12,18 @@ import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController
+@Controller
 public class UserController {
 
   private static final int AVATAR_SIZE = 256;
@@ -33,6 +35,7 @@ public class UserController {
   private String uploadPath;
 
   @GetMapping(value = "/data/currentUsername", produces = "application/json")
+  @ResponseBody
   public String getUser(){
     User user = userService.getCurrentUser();
     if(user != null){
@@ -43,6 +46,7 @@ public class UserController {
   }
 
   @GetMapping(value = "/data/currentUserStats", produces = "application/json")
+  @ResponseBody
   public UserStats getUserStats(){
     User user = userService.getCurrentUser();
     if(user != null && user.getStats() != null){
@@ -53,6 +57,7 @@ public class UserController {
   }
 
   @GetMapping(value = "/data/currentUserSettings", produces = "application/json")
+  @ResponseBody
   public UserSettings getUserSettings() {
     User user = userService.getCurrentUser();
     if (user != null && user.getSettings() != null) {
@@ -63,6 +68,7 @@ public class UserController {
   }
 
   @PutMapping(value = "/data/currentUserSettings")
+  @ResponseBody
   public void updateUserSettings(@RequestBody UserSettings newSettings){
     User user = userService.getCurrentUser();
     if(user != null){
@@ -74,6 +80,7 @@ public class UserController {
   }
 
   @GetMapping(value = "/data/currentUserAvatar", produces = "application/json")
+  @ResponseBody
   public String getUserAvatar(){
     return userService.getUserAvatar(userService.getCurrentUser());
   }
@@ -98,6 +105,6 @@ public class UserController {
     }
 
     userService.addUserAvatar(model);
-    return "profile";
+    return "redirect:/profile";
   }
 }

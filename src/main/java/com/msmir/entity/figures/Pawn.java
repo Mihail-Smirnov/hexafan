@@ -48,10 +48,11 @@ public class Pawn extends Figure {
     List<List<Cell>> moveCellLines = new ArrayList<>();
     Cell cell = board.getCell(getCell());
     if(cell != null){
-      Cell forwardCell = cell.getSides().get(1+getRotation());
-      if(forwardCell != null){
-        if(isFirstMove() && !isObstacle(forwardCell.getSides().get(1+getRotation()))){
-          moveCellLines.add(List.of(forwardCell, forwardCell.getSides().get(1+getRotation())));
+      int side = 1+getRotation();
+      Cell forwardCell = cell.getSides().get(side);
+      if(forwardCell != null && !isObstacle(forwardCell)){
+        if(isFirstMove() && !isObstacle(forwardCell.getSides().get(side))){
+          moveCellLines.add(List.of(forwardCell, forwardCell.getSides().get(side)));
         }else{
           moveCellLines.add(List.of(forwardCell));
         }
